@@ -35,27 +35,29 @@ const donationColRef = collection(db, "add donations");
 const volunteerColRef = collection(db, "volunteers");
 const contactColRef = collection(db, "contacts");
 
+let current = "";
 
-
-
-let current = ''
-
-
-// ---------------------- get collection data of donation form --------------------- 
+// ---------------------- get collection data of donation form ---------------------
 const displayDonations = async (searchValue) => {
-  current = 'donation'
+  current = "donation";
   const donationData = document.querySelector(".donationData");
+  const select = document.querySelector("#select");
+  console.log(select.options);
+  // for (let i = 0; i <= 11; i++) {
+  //   select.option.addEventListener("onClick", () => displayDonations());
+  // }
+  // select.option.addEventListener("onClick", () => displayDonations());
   const table = document.createElement("table");
-  const heading = document.createElement('h1');
-  heading.innerText = 'Donation Form Data'
+  const heading = document.createElement("h1");
+  heading.innerText = "Donation Form Data";
   table.classList.add("table");
 
   let users = [];
   // const querySnapshot = await getDocs(donationColRef);
   try {
     users = [];
-     onSnapshot(donationColRef, (snapshot) => {
-      snapshot.forEach((doc) => { 
+    onSnapshot(donationColRef, (snapshot) => {
+      snapshot.forEach((doc) => {
         users.push({ ...doc.data(), id: doc });
       });
       update(users);
@@ -64,19 +66,16 @@ const displayDonations = async (searchValue) => {
     console.log(err.message);
   }
 
-
   // ----------- update function
   let arr = [];
   const update = (users) => {
- 
+    let value = true;
+    console.log(users);
 
-    let value = true
-    console.log(users)
-
-      if (value) {
-        arr = [];
-        donationData.innerHTML = "";
-        arr.push(`
+    if (value) {
+      arr = [];
+      donationData.innerHTML = "";
+      arr.push(`
           <tr>
             <th>Fullname</th>
             <th>Email</th>
@@ -87,71 +86,58 @@ const displayDonations = async (searchValue) => {
           </tr>
     
         `);
-        value = false;
-      } 
-        // let data = user.createdAt
-        // let day = new Date(data)    
-        // let date = day.getDate()
-        // let month = day.getMonth() + 1  
-        // let year = day.getFullYear()
-        // console.log(year)  
+      value = false;
+    }
 
-    
-    users.forEach(user => {
-      console.log('bhae jan' )
-      
+    users.forEach((user) => {
+      let data = user.createdAt * 1000;
+      let day = new Date(data);
+      // let date = day.getDate();
+      let month = day.toLocaleDateString("default", { month: "long" });
+      // let year = day.getFullYear();
 
-    //       console.log('filter bhae jan')
-          if(searchValue ? user.fullname.trim().toLowerCase().includes(searchValue.toLowerCase()) : true){
-            arr.push(`
+      //       console.log('filter bhae jan')
+      if (
+        searchValue
+          ? user.fullname
+              .trim()
+              .toLowerCase()
+              .includes(searchValue.toLowerCase())
+          : true &&
+            month.toLocaleLowerCase() === select.value.toLocaleLowerCase()
+      ) {
+        arr.push(`
             <tr>    
               <td>${user.fullname}</td>
               <td>${user.email}</td>
               <td>${user.option}</td>
               <td>${user.amount}</td>
-              <td>${user.method}</td>
-              <td>    
-              ${ 
-                user.createdAt.toDate
-              }
-              </td>
+              <td>${user.method}</td> 
+              <td>${month}</td>
             </tr>
-          `);   
-          }
+          `);
+      }
+    });
 
-
-        
-    })
-        
-      
-  
-    table.innerHTML = arr.join("");  
-    donationData.append(heading)
+    table.innerHTML = arr.join("");
+    donationData.append(heading);
     donationData.appendChild(table);
   };
 };
 window.displayDonations = displayDonations;
 
-
-
-
-
-
-
 // -------------------- get collection data of volunteer form -------------------------
 
-
 const displayVolunteer = async (searchValue) => {
-  console.log(`volunteer ${searchValue}`)
-  current = 'volunteer'
+  console.log(`volunteer ${searchValue}`);
+  current = "volunteer";
   // e.preventDefault()
   const donationData = document.querySelector(".donationData");
-
+  const select = document.querySelector("#select");
   const table = document.createElement("table");
-  const heading = document.createElement('h1')
-  heading.innerText = 'Volunteer Form Data'
+  const heading = document.createElement("h1");
+  heading.innerText = "Volunteer Form Data";
   table.classList.add("table");
-
 
   let users = [];
   // const querySnapshot = await getDocs(donationColRef);
@@ -170,14 +156,14 @@ const displayVolunteer = async (searchValue) => {
 
   let arr = [];
   const update = (users) => {
-    let value = true
-    console.log(users)
+    let value = true;
+    console.log(users);
 
-      // if(user){
-        if (value) {
-          arr = [];
-          donationData.innerHTML = "";
-          arr.push(`
+    // if(user){
+    if (value) {
+      arr = [];
+      donationData.innerHTML = "";
+      arr.push(`
             <tr>
               <th>Name</th>
               <th>Email</th>
@@ -186,16 +172,28 @@ const displayVolunteer = async (searchValue) => {
               <th>Date of Birth</th>
               <th>Area of interest</th>
               <th>Message</th>
+              <th>Created At</th>
             </tr>
       
           `);
-          value = false;
-        } 
+      value = false;
+    }
     users.forEach((user) => {
-      if(searchValue ? user.fullname.trim().toLowerCase().includes(searchValue.trim().toLowerCase()) : true){
+      let data = user.createdAt * 1000;
+      let day = new Date(data);
+      // let date = day.getDate();
+      let month = day.toLocaleDateString("default", { month: "long" });
+      // let year = day.getFullYear();
 
-
-          arr.push(`
+      if (
+        searchValue
+          ? user.name
+              .trim()
+              .toLowerCase()
+              .includes(searchValue.trim().toLowerCase())
+          : true
+      ) {
+        arr.push(`
             <tr>
               <td>${user.name}</td>
               <td>${user.email}</td>
@@ -204,11 +202,10 @@ const displayVolunteer = async (searchValue) => {
               <td>${user.dob}</td>
               <td>${user.area_of_interest}</td>
               <td>${user.message}</td>
+              <td>${month}</td>
             </tr>
           `);
-        
       }
-     
     });
 
     table.innerHTML = arr.join("");
@@ -220,28 +217,19 @@ const displayVolunteer = async (searchValue) => {
 
 window.displayVolunteer = displayVolunteer;
 
-
-
-
-
-
-
-
-
-
 // -------------------- get collection data of contact form -------------------------
 
-const displayContacts = async (value) => {
-  console.log(`contact ${value  }`)
-  current = 'contact'
+const displayContacts = async (searchValue) => {
+  console.log(`contact ${searchValue}`);
+  current = "contact";
   // e.preventDefault()
   const donationData = document.querySelector(".donationData");
+  const select = document.querySelector("#select");
 
   const table = document.createElement("table");
-  const heading = document.createElement('h1')
-  heading.innerText = 'Contact Form Data'
+  const heading = document.createElement("h1");
+  heading.innerText = "Contact Form Data";
   table.classList.add("table");
-
 
   let users = [];
   // const querySnapshot = await getDocs(donationColRef);
@@ -260,15 +248,13 @@ const displayContacts = async (value) => {
 
   let arr = [];
   const update = (users) => {
-    let value = true
-    console.log(users)
+    let value = true;
+    console.log(users);
 
-    users.forEach((user) => {
-      if(user){
-        if (value) {
-          arr = [];
-          donationData.innerHTML = "";
-          arr.push(`
+    if (value) {
+      arr = [];
+      donationData.innerHTML = "";
+      arr.push(`
             <tr>
               <th>Name</th>
               <th>Email</th>
@@ -277,9 +263,18 @@ const displayContacts = async (value) => {
             </tr>
       
           `);
-          value = false;
-        } else {
-          arr.push(`
+      value = false;
+    }
+    users.forEach((user) => {
+      if (
+        searchValue
+          ? user.name
+              .trim()
+              .toLowerCase()
+              .includes(searchValue.trim().toLowerCase())
+          : true
+      ) {
+        arr.push(`
             <tr>
               <td>${user.name}</td>
               <td>${user.email}</td>
@@ -287,9 +282,10 @@ const displayContacts = async (value) => {
               <td>${user.subject}</td>
             </tr>
           `);
-        }
       }
     });
+
+    // });
 
     table.innerHTML = arr.join("");
     donationData.appendChild(heading);
@@ -300,17 +296,15 @@ const displayContacts = async (value) => {
 
 window.displayContacts = displayContacts;
 
-
 const search = (value) => {
-  console.log(value)
-  if(current === 'donation'){
-    displayDonations(value)
-  } else if(current === 'volunteer'){
-    displayVolunteer(value)
+  console.log(value);
+  if (current === "donation") {
+    displayDonations(value);
+  } else if (current === "volunteer") {
+    displayVolunteer(value);
   } else {
-    displayContacts(value)
+    displayContacts(value);
   }
+};
 
-}
-
-window.search = search
+window.search = search;
