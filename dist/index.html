@@ -11,7 +11,6 @@
       margin: 50px;
     }
     .donationData{
-      /* background: #119977; */
       background: white;
       width:fit-content;
       margin: 100px auto;
@@ -55,7 +54,32 @@
     <button class="button" onclick="displayDonations()">Donations</button>
     <button class="button" onclick="displayVolunteer()">Volunteer</button>
     <button class="button" onclick="displayContacts()">Contact</button>
+    <br>  
+
+    <label for="input">
+      <span>Enter the query: </span>
+      <input type="text" id="input" onkeydown="search(input.value)">
+      <button class="button">Search</button>
+    </label>
+  
+    <select name="select" id="select">
+      <option value="junuary">junuary</option>
+      <option value="february">february</option>
+      <option value="march">march</option>
+      <option value="april">april</option>
+      <option value="may" selected>may</option>
+      <option value="june">june</option>
+      <option value="july">july</option>
+      <option value="august">august</option>
+      <option value="september">september</option>
+      <option value="october">october</option>
+      <option value="november">november</option>
+      <option value="december">december</option>
+  
+    </select>
   </center>
+
+
 
 
   <div class="donationData"></div>
